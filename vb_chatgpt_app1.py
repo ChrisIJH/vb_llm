@@ -42,19 +42,21 @@ if prompt:
     #     # st.write(f"User has sent the following prompt: {prompt}")
     st.session_state.messages.append({"role": "user", "content":prompt})
     
+
     with st.chat_message("assistant"):
-        stream = client.chat.completions.create(
-            model=st.session_state["openai_model"],
-            messages = [
+        messages = [
                 {'role':'system', 
                 'content':"""You are an assistant who\
                     responds in the style of Dr Seuss."""},
             ]
-            messages +=[
+        messages +=    [
                  
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
-            ],
+            ]
+        stream = client.chat.completions.create(
+            model=st.session_state["openai_model"],
+            messages = messages,
             stream=True,
         )
         response = st.write_stream(stream)
